@@ -13,20 +13,7 @@ const LOG_EVENT_GAME_OVER = 'GAME_OVER';
 
 let battleLog = [];
 let lastLoggedEntry;
-
-function getMaxLifeValues() {
-  const enteredValue = prompt('Maximum life for you and the monster.', '100');
-
-  const parsedValue = parseInt(enteredValue);
-  if (isNaN(parsedValue) || parsedValue <= 0) {
-    throw { message: 'Invalid user input, not a number!' };
-  }
-  return parsedValue;
-}
-
-let chosenMaxLife;
-
-try {
+M
   chosenMaxLife = getMaxLifeValues();
 } catch (error) {
   console.log(error);
@@ -185,6 +172,7 @@ function endRound() {
 
 function attackMonster(mode) {
   const maxDamage = mode === MODE_ATTACK ? ATTACK_VALUE : STRONG_ATTACK_VALUE;
+    //OPERATIE TERTIARA const var = (conditie) ? (true) : (false)
   const logEvent =
     mode === MODE_ATTACK
       ? LOG_EVENT_PLAYER_ATTACK
