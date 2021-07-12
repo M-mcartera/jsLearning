@@ -13,7 +13,16 @@ const LOG_EVENT_GAME_OVER = 'GAME_OVER';
 
 let battleLog = [];
 let lastLoggedEntry;
-M
+function getMaxLifeValues() {
+  const enteredValue = prompt('Maximum life for you and the monster.', '100');
+
+  const parsedValue = parseInt(enteredValue);
+  if (isNaN(parsedValue) || parsedValue <= 0) {
+    throw { message: 'Invalid user input, not a number!' };
+  }
+  return parsedValue;
+}
+try{
   chosenMaxLife = getMaxLifeValues();
 } catch (error) {
   console.log(error);
