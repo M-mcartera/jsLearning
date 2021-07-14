@@ -1,15 +1,15 @@
 class DOMHelper {
- static clearEventListeners(element){
-     const clonedELement = element.cloneNode(true);
-     element.replaceWith(clonedELement);
-     return clonedELement;
- }
+  static clearEventListeners(element) {
+    const clonedElement = element.cloneNode(true);
+    element.replaceWith(clonedElement);
+    return clonedElement;
+  }
 
- static moveElement(elementIdentifier, elementDestinationStatus){
-     const elementId = document.getElementById(elementIdentifier);
-     const elementDestination = document.querySelector(elementDestinationStatus);
-     elementDestination.append(elementId);
- }
+  static moveElement(elementId, newDestinationSelector) {
+    const element = document.getElementById(elementId);
+    const destinationElement = document.querySelector(newDestinationSelector);
+    destinationElement.append(element);
+  }
 }
 
 class Tooltip {}
@@ -19,20 +19,23 @@ class ProjectItem {
     this.id = id;
     this.updateProjectListsHandler = updateProjectListsFunction;
     this.connectMoreInfoButton();
-    this.connectSwitchButton();
+    this.connectSwitchButton(type);
   }
 
   connectMoreInfoButton() {}
 
   connectSwitchButton(type) {
-      console.log(type);
     const projectItemElement = document.getElementById(this.id);
     let switchBtn = projectItemElement.querySelector('button:last-of-type');
     switchBtn = DOMHelper.clearEventListeners(switchBtn);
     switchBtn.textContent = type === 'active' ? 'Finish' : 'Activate';
-    switchBtn.addEventListener('click', this.updateProjectListsHandler.bind(null, this.id));
+    switchBtn.addEventListener(
+      'click',
+      this.updateProjectListsHandler.bind(null, this.id)
+    );
   }
-  update(updateProjectListsFn, type){
+
+  update(updateProjectListsFn, type) {
     this.updateProjectListsHandler = updateProjectListsFn;
     this.connectSwitchButton(type);
   }
@@ -57,13 +60,14 @@ class ProjectList {
   }
 
   addProject(project) {
-      console.log(project);
     this.projects.push(project);
     DOMHelper.moveElement(project.id, `#${this.type}-projects ul`);
     project.update(this.switchProject.bind(this), this.type);
   }
 
   switchProject(projectId) {
+    // const projectIndex = this.projects.findIndex(p => p.id === projectId);
+    // this.projects.splice(projectIndex, 1);
     this.switchHandler(this.projects.find(p => p.id === projectId));
     this.projects = this.projects.filter(p => p.id !== projectId);
   }
