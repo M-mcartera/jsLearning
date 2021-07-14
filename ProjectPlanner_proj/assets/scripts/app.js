@@ -112,7 +112,7 @@ class ProjectItem {
     });
 
     item.addEventListener('dragend', event => {
-      console.log(event);
+        console.log(event);
     });
   }
 
@@ -160,6 +160,7 @@ class ProjectList {
     const list = document.querySelector(`#${this.type}-projects ul`);
 
     list.addEventListener('dragenter', event => {
+        event.preventDefault();
       if (event.dataTransfer.types[0] === 'text/plain') {
         list.parentElement.classList.add('droppable');
         event.preventDefault();
@@ -175,6 +176,7 @@ class ProjectList {
     list.addEventListener('dragleave', event => {
       if (event.relatedTarget.closest(`#${this.type}-projects ul`) !== list) {
         list.parentElement.classList.remove('droppable');
+        event.preventDefault();
       }
     });
 
