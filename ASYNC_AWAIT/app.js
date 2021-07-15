@@ -36,27 +36,28 @@ async function trackUserHandler() {
   let positionData;
   let posData;
   let timerData;
-  try {
-    posData = await getPosition();
-    // posData = await fakeReject();
-    timerData = await setTimer(2000);
-  } catch (error) {
-    console.log(error);
-  }
-  console.log(timerData, posData);  
+  // try {
+  //   posData = await getPosition();
+  //   // posData = await fakeReject();
+  //   timerData = await setTimer(2000);
+  //   console.log(timerData, posData);
+  // } catch (error) {
+  //   console.log(error);
+  // }
+  // console.log(timerData, posData);  
   //console.log(posData);
-  // getPosition()
-  //   .then(posData => {
-  //     positionData = posData;
-  //     return setTimer(2000);
-  //   })
-  //   .catch(err => {
-  //     console.log(err);
-  //     return 'on we go...';
-  //   })
-  //   .then(data => {
-  //     console.log(data, positionData);
-  //   });
+  getPosition()
+    .then(posData => {
+      positionData = posData;
+      return setTimer(2000);
+    })
+    .catch(err => {
+      console.log(err);
+      return 'on we go...';
+    })
+    .then(data => {
+      console.log(data, positionData);
+    });
   setTimer(1000).then(() => {
     console.log('Timer done!');
   });
