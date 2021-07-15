@@ -1,71 +1,110 @@
 const listElement = document.querySelector('.posts');
-const template = document.getElementById('elemTemplate');
+const postTemplate = document.getElementById('single-post');
+const form = document.querySelector('#new-post form');
+const fetchButton = document.querySelector('#available-posts button');
+const postList = document.querySelector('ul');
 
-const titleInput = document.getElementById('title');
-const contentInput = document.getElementById('content');
+function sendHttpRequest(method, url, data) {
+  // const promise = new Promise((resolve, reject) => {
+  // const xhr = new XMLHttpRequest();
+  // xhr.setRequestHeader('Content-Type', 'application/json');
 
-const addBtn = document.getElementById('new-post').querySelector('button');
-const fetchBtn = document.getElementById('available-posts').querySelector('button');
+  //   xhr.open(method, url);
 
+  //   xhr.responseType = 'json';
 
-const sendHttpRequest = (method, url, data) =>{
-    const promise = new Promise((response, reject) =>{
-        const xhr = new XMLHttpRequest();
+  //   xhr.onload = function() {
+  //     if (xhr.status >= 200 && xhr.status < 300) {
+  //       resolve(xhr.response);
+  //     } else {
+  // xhr.response;
+  //       reject(new Error('Something went wrong!'));
+  //     }
+  //     // const listOfPosts = JSON.parse(xhr.response);
+  //   };
 
-        xhr.open(method, url);
-        
-        xhr.onload = function(){
-            response(xhr.response);
-        }
-        xhr.send(JSON.stringify(data));
+  //   xhr.onerror = function() {
+  //     reject(new Error('Failed to send request!'));
+  //   };
+
+  //   xhr.send(JSON.stringify(data));
+  // });
+
+  // return promise;
+  return fetch(url, {
+    method: method,
+    // body: JSON.stringify(data),
+    body: data,
+    // headers: {
+    //   'Content-Type': 'application/json'
+    // }
+  })
+    .then(response => {
+      if (response.status >= 200 && response.status < 300) {
+        return response.json();
+      } else {
+        return response.json().then(errData => {
+          console.log(errData);
+          throw new Error('Something went wrong - server-side.');
+        });
+      }
+    })
+    .catch(error => {
+      console.log(error);
+      throw new Error('Something went wrong!');
     });
-    return promise;
 }
 
-const fetchPosts = () =>{
-    if(listElement.children.length !== 0){
-        listElement.innerHTML  = "";
+async function fetchPosts() {
+  try {
+    const responseData = await sendHttpRequest(
+      'GET',
+      'https://jsonplaceholder.typicode.com/posts'
+    );
+    const listOfPosts = responseData;
+    for (const post of listOfPosts) {
+      const postEl = document.importNode(postTemplate.content, true);
+      postEl.querySelector('h2').textContent = post.title.toUpperCase();
+      postEl.querySelector('p').textContent = post.body;
+      postEl.querySelector('li').id = post.id;
+      listElement.append(postEl);
     }
-    sendHttpRequest('GET', 'https://jsonplaceholder.typicode.com/posts').then(response =>{
-        const listOfPosts = JSON.parse(response);
-        for(const post of listOfPosts){
-            const liEl = document.importNode(template.content, true);
-            liEl.querySelector('h2').textContent = post.title.toUpperCase();
-            liEl.querySelector('p').textContent = post.body;
-            liEl.querySelector('li').id = post.id;
-            listElement.append(liEl);
-        }
-    });
+  } catch (error) {
+    alert(error.message);
+  }
 }
 
-async function createPost(title, content){
-    const userId = Math.random();
-    const post = {
-        title: title,
-        body: content,
-        userId,
-    };
+async function createPost(title, content) {
+  const userId = Math.random();
+  const post = {
+    title: title,
+    body: content,
+    userId: userId
+  };
 
-    sendHttpRequest('POST', 'https://jsonplaceholder.typicode.com/posts',post);
+  const fd = new FormData(form);
+  // fd.append('title', title);
+  // fd.append('body', content);
+  fd.append('userId', userId);
+
+  sendHttpRequest('POST', 'https://jsonplaceholder.typicode.com/posts', fd);
 }
 
-const getUserInput = e =>{
-    e.preventDefault();
-    if(titleInput.value.trim() !== "" && contentInput.value.trim() !== ""){
-        createPost(titleInput.value, contentInput.value);
-    }
-}
+fetchButton.addEventListener('click', fetchPosts);
+form.addEventListener('submit', event => {
+  event.preventDefault();
+  const enteredTitle = event.currentTarget.querySelector('#title').value;
+  const enteredContent = event.currentTarget.querySelector('#content').value;
 
+  createPost(enteredTitle, enteredContent);
+});
 
-addBtn.addEventListener('click', getUserInput);
-fetchBtn.addEventListener('click', fetchPosts);
-// fetchPosts();
-// createPost('SOME TITLE', "SOME CONTENT");
-console.dir(listElement);
-
-listElement.addEventListener('click', event =>{
-    if(event.target.tagName === 'BUTTON'){
-        const postId = event.target.closest('li').id;
-        sendHttpRequest('DELETE', `https://jsonplaceholder.typicode.com/posts/${postId}`);
-    }
-})
+postList.addEventListener('click', event => {
+  if (event.target.tagName === 'BUTTON') {
+    const postId = event.target.closest('li').id;
+    sendHttpRequest(
+      'DELETE',
+      `https://jsonplaceholder.typicode.com/posts/${postId}`
+    );
+  }
+});
