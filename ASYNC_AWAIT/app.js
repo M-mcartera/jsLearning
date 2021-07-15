@@ -25,17 +25,26 @@ const setTimer = duration => {
   return promise;
 };
 
+// const fakeReject = () =>{
+//   const promise = new Promise((resolve, reject) => {
+//     reject('some error occured');
+//   });
+//   return promise;
+// }
+
 async function trackUserHandler() {
   let positionData;
   let posData;
   let timerData;
   try {
     posData = await getPosition();
+    // posData = await fakeReject();
     timerData = await setTimer(2000);
   } catch (error) {
     console.log(error);
   }
-  console.log(timerData, posData);
+  console.log(timerData, posData);  
+  //console.log(posData);
   // getPosition()
   //   .then(posData => {
   //     positionData = posData;
