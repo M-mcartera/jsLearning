@@ -1,7 +1,7 @@
 class InfoToggle extends HTMLElement {
   constructor() {
     super();
-    this._isVisible = false;
+    this._isVisible = true;
     this.attachShadow({ mode: 'open' });
     this.shadowRoot.innerHTML = `
         <style>
@@ -23,6 +23,7 @@ class InfoToggle extends HTMLElement {
   }
 
   connectedCallback() {
+    console.log('aaaa');
     if (this.hasAttribute('is-visible')) {
       if (this.getAttribute('is-visible') === 'true') {
         this._isVisible = true;
